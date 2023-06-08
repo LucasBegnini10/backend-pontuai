@@ -8,9 +8,9 @@ defmodule PhxWeb.AccountController do
     {status, content} = AccountService.create(params)
     
     case status do 
-      201 -> conn |> put_status(status) |> render("account.json", content: content)
-      400 -> conn |> put_status(status) |> render("error-changeset.json", content: content)
-      500 -> conn |> put_status(status) |> render("500.json", content: content)
+      :created -> conn |> put_status(:created) |> render("account.json", content: content)
+      :error_changeset -> conn |> put_status(:bad_request) |> render("error-changeset.json", content: content)
+      :error -> conn |> put_status(:internal_server_error) |> render("500.json", content: content)
     end
   end 
 end

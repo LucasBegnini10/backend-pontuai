@@ -14,14 +14,14 @@ defmodule Phx.Service.AccountService do
     res = UserRepository.create(user)
 
     case res do
-      {:ok, schema} -> {201, schema}
+      {:ok, schema} -> {:created, schema}
       {:error, error} ->
         if error.__struct__ == Ecto.Changeset do 
-          {400, error.errors}
+          {:error_changeset, error.errors}
         else
-          {500, error}
+          {:error, error}
         end
-        _ -> {500, res}
+        _ -> {:error, res}
       end
   end
 
