@@ -1,6 +1,7 @@
 defmodule Phx.Schema.AwardSchema do 
   use Ecto.Schema
   import Ecto.Changeset
+  alias Phx.Schema.AwardSchema
 
   @fields [:award_id, :name, :points, :description, :status]
   @fields_required [:award_id, :name, :points, :description, :status]
@@ -16,7 +17,7 @@ defmodule Phx.Schema.AwardSchema do
     timestamps()
   end
 
-  def changeset(award, params \\ %{}) do
+  def changeset(%AwardSchema{} = award, params \\ %{}) do
     award
     |> cast(params, @fields)
     |> validate_required(@fields_required)

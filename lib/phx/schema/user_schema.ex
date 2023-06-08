@@ -24,7 +24,7 @@ defmodule Phx.Schema.UserSchema do
     timestamps()
   end
 
-  def changeset(user, params \\ %{}) do
+  def changeset(%UserSchema{} = user, params \\ %{}) do
     user
     |> cast(params, @fields)
     |> validate_required(@fields_required)
