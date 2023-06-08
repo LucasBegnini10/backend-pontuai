@@ -5,7 +5,7 @@ defmodule PhxWeb.AccountController do
   alias Phx.Service.AccountService
 
   def create(conn, params) do 
-    {status, content} = AccountService.create(params)s
+    {status, content} = AccountService.create(params)
     
     case status do 
       201 -> conn |> put_status(status) |> render("account.json", content: content)

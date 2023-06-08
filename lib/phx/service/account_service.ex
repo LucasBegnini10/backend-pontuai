@@ -1,11 +1,15 @@
 defmodule Phx.Service.AccountService do 
 
+  alias Phx.Utils.Encrypt
+
   alias Phx.Repository.UserRepository
   alias Phx.Utils.UUID
 
   def create(user  \\ %{}) do 
     user_id = UUID.generate()
-    user = user |> Map.put("user_id", user_id)
+    password_hashed = Encrypt.add_hash(user["password"])
+    
+    user = user |> Map.merge(%{"user_id" => user_id, "password" => password_hashed})
 
     case UserRepository.create(user) do
       {:ok, schema} -> {201, schema}
