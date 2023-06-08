@@ -11,7 +11,9 @@ defmodule Phx.Service.AccountService do
     
     user = user |> Map.merge(%{"user_id" => user_id, "password" => password_hashed})
 
-    case UserRepository.create(user) do
+    res = UserRepository.create(user)
+
+    case res do
       {:ok, schema} -> {201, schema}
       {:error, error} ->
         if error.__struct__ == Ecto.Changeset do 
@@ -19,8 +21,8 @@ defmodule Phx.Service.AccountService do
         else
           {500, error}
         end
-    end
-
+        _ -> {500, res}
+      end
   end
 
 end

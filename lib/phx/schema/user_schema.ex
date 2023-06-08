@@ -1,6 +1,9 @@
 defmodule Phx.Schema.UserSchema do 
   use Ecto.Schema
   import Ecto.Changeset
+  alias Phx.Repo
+  
+  alias Phx.Schema.UserSchema
 
   @derive {Jason.Encoder, only: [:user_id, :first_name, :last_name, :email, :document,  :code_reset_password, :inserted_at, :updated_at]}
 
@@ -26,7 +29,23 @@ defmodule Phx.Schema.UserSchema do
     |> cast(params, @fields)
     |> validate_required(@fields_required)
     |> validate_format(:email, ~r/@/)
-    |> unique_constraint([:email, :document])
+    |> unique_constraint(:email, name: :users_email_index)
+    |> unique_constraint(:document, name: :users_document_index)
+    |> unique_email_document_constraint()
+  end
+
+  defp unique_email_document_constraint(changeset) do
+    email = get_change(changeset, :email)
+    document = get_change(changeset, :document)
+  
+    case Repo.get_by(UserSchema, email: email) do
+      nil ->
+        case Repo.get_by(UserSchema, document: document) do
+          nil -> changeset
+          _ -> add_error(changeset, :document, "has already been taken")
+        end
+      _ -> add_error(changeset, :email, "has already been taken")
+    end
   end
 
 end
