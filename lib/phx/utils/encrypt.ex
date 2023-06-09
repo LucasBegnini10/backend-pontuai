@@ -7,6 +7,6 @@ defmodule Phx.Utils.Encrypt do
   end
 
   def verify_password(password, hash) do 
-    Argon2.verify_passc(password, hash)
+    Argon2.verify_pass(password, hash)
   end
 end

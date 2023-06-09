@@ -61,15 +61,28 @@ defmodule Phx.Repository.UserRepository do
     end
   end
 
-  def get_by_email_or_document(indentifier) do
+  def get_by_identifier(identifier) do
     try do 
       query = from u in UserSchema, 
-      where: u.document == ^indentifier,
-      or_where: u.email == ^indentifier
+      where: u.document == ^identifier,
+      or_where: u.email == ^identifier
 
       Repo.one(query)
     rescue e -> 
       IO.inspect(e, label: "Get User by email or document ===>")
+      {:error, e}
+    end
+  end
+
+  def get_by_identifier_and_password(identifier, password) do 
+    try do 
+      query = from u in UserSchema,
+      where: u.email == ^identifier or u.document == ^identifier,
+      where: u.password == ^password
+
+      Repo.one(query)
+    rescue e -> 
+      IO.inspect(e, label: "Get User by identifier and password ===>")
       {:error, e}
     end
   end

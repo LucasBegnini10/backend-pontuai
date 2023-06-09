@@ -4,6 +4,7 @@ defmodule Phx.Service.AccountService do
 
   alias Phx.Repository.UserRepository
   alias Phx.Utils.UUID
+  alias Phx.Schema.UserSchema
 
   def create(user  \\ %{}) do 
     user_id = UUID.generate()
@@ -24,5 +25,17 @@ defmodule Phx.Service.AccountService do
         _ -> {:error, res}
       end
   end
+
+  def authenticate_user(identifier, password) do 
+    case UserRepository.get_by_identifier(identifier) do 
+      %UserSchema{} = user -> 
+        if Encrypt.verify_password(password, user.password) do 
+          {:ok, user}
+        else 
+          {:error, nil}
+        end
+      _ -> {:error, nil}
+    end
+  end 
 
 end
