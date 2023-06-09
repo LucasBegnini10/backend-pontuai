@@ -1,19 +1,18 @@
 defmodule PhxWeb.AccountJSON do
-  def render("user-created.json", %{content: content} = assings) do
+  def render("user-created.json", %{user: user} = assings) do
     %{
     is_success: true, 
-    content: %{
-      user_created: %{
-        user_id: content.user_id,
-        first_name: content.first_name,
-        last_name: content.last_name,
-        email: content.email,
-        document: content.document,
-        # code_reset_password: content.code_reset_password,
-        inserted_at: content.inserted_at,
-        updated_at: content.updated_at
-      }
-    }}
+    created: true,
+    user: show_user(user)
+    }
+  end
+
+  def render("user-updated.json", %{user: user} = assings) do
+    %{
+    is_success: true, 
+    updated: true,
+    user: show_user(user)
+    }
   end
 
   def render("error-changeset.json", %{content: content} = assings) do
@@ -39,6 +38,29 @@ defmodule PhxWeb.AccountJSON do
     %{
       is_success: true,
       token: token
+    }
+  end
+
+  def render("user-not-found.json", %{user_id: user_id} = assings) do 
+    %{
+      is_success: false,
+      errors: %{
+        detail: "User #{user_id} not found"
+      }
+    }
+  end
+
+
+  defp show_user(user) do 
+    %{
+      user_id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      document: user.document,
+      # code_reset_password: user.code_reset_password,
+      inserted_at: user.inserted_at,
+      updated_at: user.updated_at
     }
   end
   

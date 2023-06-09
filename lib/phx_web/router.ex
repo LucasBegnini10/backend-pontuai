@@ -32,7 +32,8 @@ defmodule PhxWeb.Router do
   scope "/api/v1", PhxWeb do
     pipe_through [:api, :auth]
 
-    delete "/accounts/:id", AccountController, :delete
+    patch "/accounts/:user_id", AccountController, :update
+    # delete "/accounts/:id", AccountController, :delete
   end
 
 

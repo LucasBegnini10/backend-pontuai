@@ -6,7 +6,7 @@ defmodule Phx.Repository.UserRepository do
   def create(attrs \\ %{}) do 
     try do
       %UserSchema{}
-      |> UserSchema.changeset(attrs)
+      |> UserSchema.changeset(attrs, :create)
       |> Repo.insert()
     rescue e ->
       IO.inspect(e, label: "Create User ===>")
@@ -25,7 +25,7 @@ defmodule Phx.Repository.UserRepository do
   def update(user_id, attrs \\ %{}) do 
     try do 
       Repo.get_by!(UserSchema, user_id: user_id)
-      |> UserSchema.changeset(attrs)
+      |> UserSchema.changeset(attrs, :update)
       |> Repo.update()
     rescue e -> 
       IO.inspect(e, label: "Update User ===>")

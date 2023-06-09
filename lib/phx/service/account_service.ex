@@ -17,10 +17,10 @@ defmodule Phx.Service.AccountService do
     case res do
       {:ok, schema} -> {:created, schema}
       {:error, error} ->
-        if error.__struct__ == Ecto.Changeset do 
-          {:error_changeset, error.errors}
-        else
-          {:error, error}
+        case error do 
+          %Ecto.Changeset{} = changeset ->
+            {:error_changeset, error.errors}
+          _ -> {:error, error}
         end
         _ -> {:error, res}
       end
@@ -37,5 +37,30 @@ defmodule Phx.Service.AccountService do
       _ -> {:error, nil}
     end
   end 
+
+
+  def update(user_id, attrs \\ %{}) do 
+    user = %{
+      email: attrs["email"],
+      first_name: attrs["first_name"],
+      last_name: attrs["last_name"],
+      password: attrs["password"] != nil && Encrypt.add_hash(attrs["password"]) || nil
+    } |> Map.to_list() |> Enum.reject(fn {_, v} -> is_nil(v) end) |> Map.new
+
+    res = UserRepository.update(user_id, user)
+    
+    case res do 
+      {:ok, schema} -> {:updated, schema}
+      {:error, error} ->
+        case error do 
+          %Ecto.Changeset{} = changeset ->
+            {:error_changeset, error.errors}
+          %Ecto.NoResultsError{} = no_result ->
+            {:no_result, no_result.message}
+          _ -> {:error, error}
+        end
+      _ -> {:error, res}
+    end
+  end
 
 end

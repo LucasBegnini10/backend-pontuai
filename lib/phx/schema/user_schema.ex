@@ -1,8 +1,8 @@
 defmodule Phx.Schema.UserSchema do 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Phx.Repo
-  
   alias Phx.Schema.UserSchema
 
   @derive {Jason.Encoder, only: [:user_id, :first_name, :last_name, :email, :document,  :code_reset_password, :inserted_at, :updated_at]}
@@ -24,23 +24,22 @@ defmodule Phx.Schema.UserSchema do
     timestamps()
   end
 
-  def changeset(%UserSchema{} = user, params \\ %{}) do
+  def changeset(%UserSchema{} = user, params \\ %{}, type) do
     user
     |> cast(params, @fields)
     |> validate_required(@fields_required)
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email, name: :users_email_index)
-    |> unique_constraint(:document, name: :users_document_index)
-    |> unique_email_document_constraint()
+    |> validate_format(:email, ~r/^[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+$/i)
+    |> unique_email_document_constraint(type)
   end
 
-  defp unique_email_document_constraint(changeset) do
+
+  defp unique_email_document_constraint(changeset, type) when type == :create do
     email = get_change(changeset, :email)
     document = get_change(changeset, :document)
   
-    case Repo.get_by(UserSchema, email: email) do
+    case Repo.one(from(u in UserSchema, where: u.email == ^email)) do
       nil ->
-        case Repo.get_by(UserSchema, document: document) do
+        case Repo.one(from(u in UserSchema, where: u.document == ^document)) do
           nil -> changeset
           _ -> add_error(changeset, :document, "has already been taken")
         end
@@ -48,4 +47,32 @@ defmodule Phx.Schema.UserSchema do
     end
   end
 
+  defp unique_email_document_constraint(changeset, type) when type == :update do
+  email = get_change(changeset, :email)
+  document = get_change(changeset, :document)
+
+  if email != nil do
+    case Repo.one(from(u in UserSchema, where: u.email == ^email)) do
+      nil ->
+        if document != nil do
+          case Repo.one(from(u in UserSchema, where: u.document == ^document)) do
+            nil -> changeset
+            _ -> add_error(changeset, :document, "has already been taken")
+          end
+        else
+          changeset
+        end
+      _ -> add_error(changeset, :email, "has already been taken")
+    end
+  else
+    if document != nil do
+      case Repo.one(from(u in UserSchema, where: u.document == ^document)) do
+        nil -> changeset
+        _ -> add_error(changeset, :document, "has already been taken")
+      end
+    else
+      changeset
+    end
+  end
+end
 end
