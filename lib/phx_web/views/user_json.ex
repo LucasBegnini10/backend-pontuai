@@ -1,17 +1,25 @@
 defmodule PhxWeb.UserJSON do
   def render("user-created.json", %{user: user}) do
     %{
-    is_success: true, 
-    created: true,
-    user: show_user(user)
+      is_success: true, 
+      created: true,
+      user: show_user(user)
     }
   end
 
   def render("user-updated.json", %{user: user}) do
     %{
-    is_success: true, 
-    updated: true,
-    user: show_user(user)
+      is_success: true, 
+      updated: true,
+      user: show_user(user)
+    }
+  end
+
+  def render("user-found.json", %{user: user}) do
+    %{
+      is_success: true, 
+      found: true,
+      user: show_user(user)
     }
   end
 

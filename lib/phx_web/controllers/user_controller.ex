@@ -3,6 +3,20 @@ defmodule PhxWeb.UserController do
   use PhxWeb, :controller
   alias Phx.Service.SessionService
   alias Phx.Service.UserService
+  alias Phx.Schema.UserSchema
+
+  def get(conn, params) do
+    case UserService.get(params["user_id"]) do 
+      %UserSchema{} = user -> 
+        conn |> put_status(:ok) |> render("user-found.json", user: user)
+      _ -> 
+        conn
+        |> put_status(:not_found)
+        |> put_view(PhxWeb.ErrorJSON)
+        |> render("404.json")
+        |> halt()
+    end
+  end
 
   def create(conn, params) do 
     {status, content} = UserService.create(params)
@@ -38,5 +52,4 @@ defmodule PhxWeb.UserController do
       :error -> conn |> put_status(:internal_server_error) |> render("500.json", content: content)
     end
   end
-  
 end

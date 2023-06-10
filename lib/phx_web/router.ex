@@ -32,6 +32,7 @@ defmodule PhxWeb.Router do
   scope "/api/v1", PhxWeb do
     pipe_through [:api, :auth]
 
+    get "/users/:user_id", UserController, :get
     patch "/users/:user_id", UserController, :update
     # delete "/users/:id", UserController, :delete
   end

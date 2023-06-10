@@ -7,7 +7,7 @@ defmodule Phx.Service.UserService do
 
   def get(user_id) do 
     case UserRepository.get(user_id) do 
-      {:ok, user} -> user
+      %UserSchema{} = user -> user
       _ -> nil
     end
   end
