@@ -1,12 +1,12 @@
 defmodule Phx.Service.SessionService do
   
-  alias Phx.Service.AccountService
+  alias Phx.Service.UserService
   alias Phx.Utils.Token
 
   alias Phx.Schema.UserSchema
 
   def new(%{"identifier" => identifier, "password" => password}) do
-     case AccountService.authenticate_user(identifier, password) do 
+     case UserService.authenticate_user(identifier, password) do 
       {:ok, %UserSchema{} = user} ->
         {:ok, Token.sign(content_token(user))}
       _ ->

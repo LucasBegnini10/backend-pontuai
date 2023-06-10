@@ -1,5 +1,5 @@
-defmodule PhxWeb.AccountJSON do
-  def render("user-created.json", %{user: user} = assings) do
+defmodule PhxWeb.UserJSON do
+  def render("user-created.json", %{user: user}) do
     %{
     is_success: true, 
     created: true,
@@ -7,7 +7,7 @@ defmodule PhxWeb.AccountJSON do
     }
   end
 
-  def render("user-updated.json", %{user: user} = assings) do
+  def render("user-updated.json", %{user: user}) do
     %{
     is_success: true, 
     updated: true,
@@ -15,7 +15,7 @@ defmodule PhxWeb.AccountJSON do
     }
   end
 
-  def render("error-changeset.json", %{content: content} = assings) do
+  def render("error-changeset.json", %{content: content}) do
     errors = Enum.map(content, fn {key, {label, _}} -> 
       %{key => label}
     end)
@@ -34,14 +34,14 @@ defmodule PhxWeb.AccountJSON do
     }
   end
 
-  def render("authenticated.json", %{token: token} = assings) do
+  def render("authenticated.json", %{token: token}) do
     %{
       is_success: true,
       token: token
     }
   end
 
-  def render("user-not-found.json", %{user_id: user_id} = assings) do 
+  def render("user-not-found.json", %{user_id: user_id}) do 
     %{
       is_success: false,
       errors: %{

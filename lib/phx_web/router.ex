@@ -23,8 +23,8 @@ defmodule PhxWeb.Router do
     pipe_through :api
 
 
-    post "/accounts/auth", AccountController, :auth
-    post "/accounts", AccountController, :create
+    post "/users/auth", UserController, :auth
+    post "/users", UserController, :create
   end
 
 
@@ -32,8 +32,8 @@ defmodule PhxWeb.Router do
   scope "/api/v1", PhxWeb do
     pipe_through [:api, :auth]
 
-    patch "/accounts/:user_id", AccountController, :update
-    # delete "/accounts/:id", AccountController, :delete
+    patch "/users/:user_id", UserController, :update
+    # delete "/users/:id", UserController, :delete
   end
 
 

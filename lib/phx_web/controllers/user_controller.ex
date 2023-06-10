@@ -1,11 +1,11 @@
-defmodule PhxWeb.AccountController do 
+defmodule PhxWeb.UserController do 
 
   use PhxWeb, :controller
   alias Phx.Service.SessionService
-  alias Phx.Service.AccountService
+  alias Phx.Service.UserService
 
   def create(conn, params) do 
-    {status, content} = AccountService.create(params)
+    {status, content} = UserService.create(params)
     
     case status do 
       :created -> conn |> put_status(:created) |> render("user-created.json", user: content)
@@ -17,7 +17,7 @@ defmodule PhxWeb.AccountController do
   def auth(conn, %{"identifier" => identifier, "password" => password}) do
     case SessionService.new(%{"identifier" => identifier, "password" => password}) do 
       {:ok, token} -> conn |> put_status(:ok) |> render("authenticated.json", token: token)
-      {:error, message} ->  
+      {:error, _message} ->  
         conn
           |> put_status(:unauthorized)
           |> put_view(PhxWeb.ErrorJSON)
@@ -29,7 +29,7 @@ defmodule PhxWeb.AccountController do
   def update(conn, params) do 
     user_id = params["user_id"]
 
-    {status, content} = AccountService.update(user_id, params)
+    {status, content} = UserService.update(user_id, params)
 
     case status do 
       :updated -> conn |> put_status(:ok) |> render("user-updated.json", user: content)
