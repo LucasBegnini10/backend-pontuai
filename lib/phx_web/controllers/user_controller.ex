@@ -16,7 +16,7 @@ defmodule PhxWeb.UserController do
 
   def auth(conn, %{"identifier" => identifier, "password" => password}) do
     case SessionService.new(%{"identifier" => identifier, "password" => password}) do 
-      {:ok, token} -> conn |> put_status(:ok) |> render("authenticated.json", token: token)
+      {:ok, token, user} -> conn |> put_status(:ok) |> render("authenticated.json", token: token, user: user)
       {:error, _message} ->  
         conn
           |> put_status(:unauthorized)

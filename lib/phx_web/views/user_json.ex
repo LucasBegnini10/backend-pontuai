@@ -34,10 +34,13 @@ defmodule PhxWeb.UserJSON do
     }
   end
 
-  def render("authenticated.json", %{token: token}) do
+  def render("authenticated.json", %{token: token, user: user}) do
     %{
       is_success: true,
-      token: token
+      content: %{
+        token: token,
+        user: show_user(user)
+      }
     }
   end
 
