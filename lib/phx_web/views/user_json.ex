@@ -2,43 +2,37 @@ defmodule PhxWeb.UserJSON do
   def render("user-created.json", %{user: user}) do
     %{
       is_success: true, 
-      created: true,
-      user: show_user(user)
+      content: %{
+        created: true,
+        user: show_user(user)
+      }
     }
   end
 
   def render("user-updated.json", %{user: user}) do
     %{
       is_success: true, 
-      updated: true,
-      user: show_user(user)
+      content: %{
+        updated: true,
+        user: show_user(user)
+      }
     }
   end
 
   def render("user-found.json", %{user: user}) do
     %{
       is_success: true, 
-      found: true,
-      user: show_user(user)
+      content: %{
+        found: true,
+        user: show_user(user)
+      }
     }
   end
 
   def render("error-changeset.json", %{content: content}) do
-    errors = Enum.map(content, fn {key, {label, _}} -> 
-      %{key => label}
-    end)
     %{
       is_success: false, 
-      errors: errors 
-    }
-  end
-
-  def render("500.json", _assigns) do
-    %{
-      is_success: false, 
-      errors: %{
-        detail: "Internal Server Error"
-      }
+      errors: Enum.map(content, fn {key, {label, _}} ->  %{key => label} end) 
     }
   end
 
@@ -61,6 +55,16 @@ defmodule PhxWeb.UserJSON do
     }
   end
 
+  def render("user-points.json", %{user_id: user_id, points: points}) do 
+    %{
+      is_success: true,
+      content: %{
+        user_id: user_id,
+        points: points
+      }
+    }
+  end
+
 
   defp show_user(user) do 
     %{
@@ -69,7 +73,7 @@ defmodule PhxWeb.UserJSON do
       last_name: user.last_name,
       email: user.email,
       document: user.document,
-      # code_reset_password: user.code_reset_password,
+      points: user.points,
       inserted_at: user.inserted_at,
       updated_at: user.updated_at
     }

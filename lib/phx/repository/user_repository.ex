@@ -88,4 +88,17 @@ defmodule Phx.Repository.UserRepository do
   end
 
 
+  def get_points(user_id) do 
+    try do 
+      query = from u in UserSchema,
+      where: u.user_id == ^user_id,
+      select: u.points
+
+      Repo.one(query)
+    rescue e -> 
+      IO.inspect(e, label: "Get points by user_id ===>")
+      {:error, e}
+    end
+  end
+
 end

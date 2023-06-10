@@ -24,7 +24,12 @@ defmodule PhxWeb.UserController do
     case status do 
       :created -> conn |> put_status(:created) |> render("user-created.json", user: content)
       :error_changeset -> conn |> put_status(:bad_request) |> render("error-changeset.json", content: content)
-      :error -> conn |> put_status(:internal_server_error) |> render("500.json", content: content)
+      :error -> 
+         conn
+          |> put_status(:internal_server_error)
+          |> put_view(PhxWeb.ErrorJSON)
+          |> render("500.json")
+          |> halt()
     end
   end 
 
@@ -49,7 +54,26 @@ defmodule PhxWeb.UserController do
       :updated -> conn |> put_status(:ok) |> render("user-updated.json", user: content)
       :error_changeset -> conn |> put_status(:bad_request) |> render("error-changeset.json", content: content)
       :no_result -> conn |> put_status(:not_found) |> render("user-not-found.json", user_id: user_id)
-      :error -> conn |> put_status(:internal_server_error) |> render("500.json", content: content)
+      :error -> 
+        conn
+        |> put_status(:internal_server_error)
+        |> put_view(PhxWeb.ErrorJSON)
+        |> render("500.json")
+        |> halt()
+    end
+  end
+  
+  def get_points(conn, params) do 
+    user_id = params["user_id"]
+    points = UserService.get_points(user_id)
+    case points do 
+      nil -> 
+        conn
+        |> put_status(:not_found)
+        |> put_view(PhxWeb.ErrorJSON)
+        |> render("404.json")
+        |> halt()
+      _ -> conn |> put_status(:ok) |> render("user-points.json", user_id: user_id, points: points)
     end
   end
 end

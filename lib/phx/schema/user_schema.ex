@@ -5,9 +5,9 @@ defmodule Phx.Schema.UserSchema do
   alias Phx.Repo
   alias Phx.Schema.UserSchema
 
-  @derive {Jason.Encoder, only: [:user_id, :first_name, :last_name, :email, :document,  :code_reset_password, :inserted_at, :updated_at]}
+  @derive {Jason.Encoder, only: [:user_id, :first_name, :last_name, :email, :document, :points,  :code_reset_password, :inserted_at, :updated_at]}
 
-  @fields [:user_id, :first_name, :last_name, :email, :document, :password, :code_reset_password, :is_admin]
+  @fields [:user_id, :first_name, :last_name, :email, :document, :password, :points, :code_reset_password, :is_admin]
   @fields_required [:user_id, :first_name, :email, :document, :password]
 
   @primary_key {:user_id, :string, autogenerate: false}
@@ -18,6 +18,7 @@ defmodule Phx.Schema.UserSchema do
     field :email,                  :string
     field :document,               :string
     field :password,               :string
+    field :points,                 :integer
     field :code_reset_password,    :string
     field :is_admin,               :boolean,        default: false
 

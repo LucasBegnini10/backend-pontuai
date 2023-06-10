@@ -44,7 +44,6 @@ defmodule Phx.Service.UserService do
     end
   end 
 
-
   def update(user_id, attrs \\ %{}) do 
     user = %{
       email: attrs["email"],
@@ -67,6 +66,10 @@ defmodule Phx.Service.UserService do
         end
       _ -> {:error, res}
     end
+  end
+
+  def get_points(user_id) do 
+    UserRepository.get_points(user_id) 
   end
   
 
