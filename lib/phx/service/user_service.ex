@@ -30,7 +30,7 @@ defmodule Phx.Service.UserService do
           _ -> {:error, error}
         end
         _ -> {:error, res}
-      end
+    end
   end
 
   def authenticate_user(identifier, password) do 
@@ -69,6 +69,21 @@ defmodule Phx.Service.UserService do
         end
       _ -> {:error, res}
     end
+  end
+
+  def delete(user_id) do 
+    res = UserRepository.delete(user_id)
+    case res do
+      {:ok, schema} -> {:deleted, schema}
+      {:error, error} ->
+        case error do 
+          %Ecto.NoResultsError{} = _changeset ->
+            {:not_found, error}
+          _ -> {:error, error}
+        end
+        _ -> {:error, res}
+    end
+
   end
 
   def get_points(user_id) do 

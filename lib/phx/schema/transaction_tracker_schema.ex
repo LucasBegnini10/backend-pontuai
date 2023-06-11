@@ -16,7 +16,7 @@ defmodule Phx.Schema.TransactionTrackerSchema do
     timestamps()
   end
 
-  def changeset(%TransactionTrackerSchema{} = transaction_tracker, attrs \\ %{}) do
+  def changeset(%TransactionTrackerSchema{} = transaction_tracker, params \\ %{}) do
     transaction_tracker
     |> cast(params, @fields)
     |> validate_required(@fields_required)

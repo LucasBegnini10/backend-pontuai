@@ -35,7 +35,7 @@ defmodule PhxWeb.Router do
     get "/users/:user_id", UserController, :get
     patch "/users/:user_id", UserController, :update
     get "/users/:user_id/points", UserController, :get_points
-    # delete "/users/:id", UserController, :delete
+    delete "/users/:user_id", UserController, :delete
   end
 
 

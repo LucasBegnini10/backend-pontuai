@@ -20,6 +20,16 @@ defmodule PhxWeb.UserJSON do
     }
   end
 
+  def render("user-deleted.json", %{user_id: user_id}) do
+    %{
+      is_success: true, 
+      content: %{
+        deleted: true,
+        user_id: user_id
+      }
+    }
+  end
+
   def render("user-found.json", %{user: user}) do
     %{
       is_success: true, 

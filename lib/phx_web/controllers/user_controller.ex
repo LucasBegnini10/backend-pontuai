@@ -64,6 +64,24 @@ defmodule PhxWeb.UserController do
         |> halt()
     end
   end
+
+  def delete(conn, params) do 
+    user_id = params["user_id"]
+
+    res = UserService.delete(user_id)
+    IO.inspect res
+
+    case res do 
+      {:deleted, schema} ->  conn |> put_status(:ok ) |> render("user-deleted.json", user_id: user_id)
+      {:not_found, %Ecto.NoResultsError{}} -> conn |> put_status(:not_found) |> render("user-not-found.json", user_id: user_id)
+      {:error, error} ->  
+        conn
+          |> put_status(:internal_server_error)
+          |> put_view(PhxWeb.ErrorJSON)
+          |> render("500.json")
+          |> halt()
+    end
+  end
   
   def get_points(conn, params) do 
     user_id = params["user_id"]
