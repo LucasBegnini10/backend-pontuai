@@ -9,12 +9,13 @@ defmodule PhxWeb.UserJSON do
     }
   end
 
-  def render("user-updated.json", %{user: user}) do
+  def render("user-updated.json", %{user: user, token: token}) do
     %{
       is_success: true, 
       content: %{
         updated: true,
-        user: show_user(user)
+        user: show_user(user),
+        token: token
       }
     }
   end

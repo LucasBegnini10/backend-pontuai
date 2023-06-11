@@ -4,6 +4,7 @@ defmodule Phx.Service.UserService do
   alias Phx.Repository.UserRepository
   alias Phx.Utils.UUID
   alias Phx.Schema.UserSchema
+  alias Phx.Service.SessionService
 
   def get(user_id) do 
     case UserRepository.get(user_id) do 
@@ -55,7 +56,9 @@ defmodule Phx.Service.UserService do
     res = UserRepository.update(user_id, user)
     
     case res do 
-      {:ok, schema} -> {:updated, schema}
+      {:ok, schema} -> 
+        token = SessionService.sign(schema)
+        {:updated, {schema, token}}
       {:error, error} ->
         case error do 
           %Ecto.Changeset{} = _changeset ->

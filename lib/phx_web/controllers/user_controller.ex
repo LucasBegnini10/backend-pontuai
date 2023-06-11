@@ -51,7 +51,9 @@ defmodule PhxWeb.UserController do
     {status, content} = UserService.update(user_id, params)
 
     case status do 
-      :updated -> conn |> put_status(:ok) |> render("user-updated.json", user: content)
+      :updated -> 
+        {user, token} = content 
+        conn |> put_status(:ok) |> render("user-updated.json", user: user, token: token)
       :error_changeset -> conn |> put_status(:bad_request) |> render("error-changeset.json", content: content)
       :no_result -> conn |> put_status(:not_found) |> render("user-not-found.json", user_id: user_id)
       :error -> 

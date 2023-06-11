@@ -8,10 +8,15 @@ defmodule Phx.Service.SessionService do
   def new(%{"identifier" => identifier, "password" => password}) do
      case UserService.authenticate_user(identifier, password) do 
       {:ok, %UserSchema{} = user} ->
-        {:ok, Token.sign(content_token(user)), user}
+        {:ok, sign(user), user}
       _ ->
         {:error, "identifier or password is in correct"}
      end
+  end
+
+
+  def sign(user) do 
+    Token.sign(content_token(user))
   end
 
   defp content_token(user) do 
