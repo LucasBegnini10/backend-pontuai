@@ -14,16 +14,30 @@ defmodule PhxWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", PhxWeb do
-    pipe_through :api
-
-    post "/account", AccountController, :create
+  pipeline :auth do
+    plug Phx.Plug.Authenticate
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", PhxWeb do
-  #   pipe_through :api
-  # end
+  #PUBLIC
+  scope "/api/v1", PhxWeb do
+    pipe_through :api
+
+
+    post "/users/auth", UserController, :auth
+    post "/users", UserController, :create
+  end
+
+
+  #AUTH
+  scope "/api/v1", PhxWeb do
+    pipe_through [:api, :auth]
+
+    get "/users/:user_id", UserController, :get
+    patch "/users/:user_id", UserController, :update
+    get "/users/:user_id/points", UserController, :get_points
+    # delete "/users/:id", UserController, :delete
+  end
+
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:phx, :dev_routes) do

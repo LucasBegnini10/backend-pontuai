@@ -6,7 +6,7 @@ defmodule Phx.Repository.UserRepository do
   def create(attrs \\ %{}) do 
     try do
       %UserSchema{}
-      |> UserSchema.changeset(attrs)
+      |> UserSchema.changeset(attrs, :create)
       |> Repo.insert()
     rescue e ->
       IO.inspect(e, label: "Create User ===>")
@@ -25,7 +25,7 @@ defmodule Phx.Repository.UserRepository do
   def update(user_id, attrs \\ %{}) do 
     try do 
       Repo.get_by!(UserSchema, user_id: user_id)
-      |> UserSchema.changeset(attrs)
+      |> UserSchema.changeset(attrs, :update)
       |> Repo.update()
     rescue e -> 
       IO.inspect(e, label: "Update User ===>")
@@ -61,11 +61,11 @@ defmodule Phx.Repository.UserRepository do
     end
   end
 
-  def get_by_email_or_document(indentifier) do
+  def get_by_identifier(identifier) do
     try do 
       query = from u in UserSchema, 
-      where: u.document == ^indentifier,
-      or_where: u.email == ^indentifier
+      where: u.document == ^identifier,
+      or_where: u.email == ^identifier
 
       Repo.one(query)
     rescue e -> 
@@ -74,5 +74,31 @@ defmodule Phx.Repository.UserRepository do
     end
   end
 
+  def get_by_identifier_and_password(identifier, password) do 
+    try do 
+      query = from u in UserSchema,
+      where: u.email == ^identifier or u.document == ^identifier,
+      where: u.password == ^password
+
+      Repo.one(query)
+    rescue e -> 
+      IO.inspect(e, label: "Get User by identifier and password ===>")
+      {:error, e}
+    end
+  end
+
+
+  def get_points(user_id) do 
+    try do 
+      query = from u in UserSchema,
+      where: u.user_id == ^user_id,
+      select: u.points
+
+      Repo.one(query)
+    rescue e -> 
+      IO.inspect(e, label: "Get points by user_id ===>")
+      {:error, e}
+    end
+  end
 
 end
