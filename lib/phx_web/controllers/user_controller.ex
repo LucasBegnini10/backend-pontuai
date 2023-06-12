@@ -72,9 +72,9 @@ defmodule PhxWeb.UserController do
     IO.inspect res
 
     case res do 
-      {:deleted, schema} ->  conn |> put_status(:ok ) |> render("user-deleted.json", user_id: user_id)
+      {:deleted, _schema} ->  conn |> put_status(:ok ) |> render("user-deleted.json", user_id: user_id)
       {:not_found, %Ecto.NoResultsError{}} -> conn |> put_status(:not_found) |> render("user-not-found.json", user_id: user_id)
-      {:error, error} ->  
+      {:error, _error} ->  
         conn
           |> put_status(:internal_server_error)
           |> put_view(PhxWeb.ErrorJSON)
