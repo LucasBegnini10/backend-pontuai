@@ -10,6 +10,28 @@ import Config
 config :phx,
   ecto_repos: [Phx.Repo]
 
+config :phx, :phoenix_swagger,
+swagger_files: %{
+  "priv/static/swagger.json" => [
+    router: PhxWeb.Router,     # phoenix routes will be converted to swagger paths
+    endpoint: PhxWeb.Endpoint  # (optional) endpoint config used to set host, port and https schemes.
+  ]
+}
+
+config :phoenix_swagger, json_library: Jason
+
+config :phx, PhxWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg|json)$},
+      ~r{priv/gettext/.*(po)$},
+      ~r{lib/phx_web/views/.*(ex)$},
+      ~r{lib/phx_web/controllers/.*(ex)$},
+      ~r{lib/phx_web/templates/.*(eex)$}
+    ]
+  ],
+  reloadable_compilers: [:gettext, :phoenix, :elixir, :phoenix_swagger]
+
 # Configures the endpoint
 config :phx, PhxWeb.Endpoint,
   url: [host: "localhost"],

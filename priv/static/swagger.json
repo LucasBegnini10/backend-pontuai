@@ -1,0 +1,45 @@
+{
+  "definitions": {},
+  "host": "localhost:4000",
+  "info": {
+    "title": "Pontuai Backend",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/users/{user_id}": {
+      "get": {
+        "description": "Get users, filtering by account ID",
+        "operationId": "PhxWeb.UserController.get_user",
+        "parameters": [
+          {
+            "description": "user_id",
+            "in": "user_id",
+            "name": "query",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get users",
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0"
+}

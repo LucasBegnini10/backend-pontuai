@@ -1,11 +1,24 @@
 defmodule PhxWeb.UserController do 
 
   use PhxWeb, :controller
+  use PhoenixSwagger
+
   alias Phx.Service.SessionService
   alias Phx.Service.UserService
   alias Phx.Schema.UserSchema
 
-  def get(conn, params) do
+
+  swagger_path :get_user do
+    get "/api/v1/users/{user_id}"
+    summary "Get users"
+    description "Get users, filtering by account ID"
+    parameter :query, :user_id, :integer, "user_id", required: true
+    parameter("Authorization", :header, :string, "Bearer access token", required: true)
+    response 200, "Ok"
+    response 404, "User not found"
+    tag "users"
+  end
+  def get_user(conn, params) do
     case UserService.get(params["user_id"]) do 
       %UserSchema{} = user -> 
         conn |> put_status(:ok) |> render("user-found.json", user: user)

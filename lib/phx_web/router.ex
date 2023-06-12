@@ -18,6 +18,10 @@ defmodule PhxWeb.Router do
     plug Phx.Plug.Authenticate
   end
 
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :phx, swagger_file: "swagger.json"
+  end
+
   #PUBLIC
   scope "/api/v1", PhxWeb do
     pipe_through :api
@@ -32,7 +36,7 @@ defmodule PhxWeb.Router do
   scope "/api/v1", PhxWeb do
     pipe_through [:api, :auth]
 
-    get "/users/:user_id", UserController, :get
+    get "/users/:user_id", UserController, :get_user
     patch "/users/:user_id", UserController, :update
     get "/users/:user_id/points", UserController, :get_points
     delete "/users/:user_id", UserController, :delete
@@ -54,5 +58,14 @@ defmodule PhxWeb.Router do
       live_dashboard "/dashboard", metrics: PhxWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "Pontuai Backend"
+      }
+    }
   end
 end
