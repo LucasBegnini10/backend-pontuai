@@ -15,7 +15,7 @@ defmodule PhxWeb.Router do
   end
 
   pipeline :auth do
-    plug Phx.Plug.Authenticate
+    plug Phx.Config.Authenticate
   end
 
   scope "/api/swagger" do
@@ -39,7 +39,7 @@ defmodule PhxWeb.Router do
     get "/users/:user_id", UserController, :get_user
     patch "/users/:user_id", UserController, :update
     get "/users/:user_id/points", UserController, :get_points
-    delete "/users/:user_id", UserController, :delete
+    delete "/users/:user_id", UserController, :delete_user
   end
 
 
@@ -62,10 +62,30 @@ defmodule PhxWeb.Router do
 
   def swagger_info do
     %{
+      schemes: ["http", "https"],
       info: %{
         version: "1.0",
-        title: "Pontuai Backend"
-      }
+        title: "Pontuai API",
+        description: "API Documentation for Pontuai v1",
+        termsOfService: "Open for public",
+        contact: %{
+          name: "Lucas Begnini",
+          email: "begninilucas12@gmail.com"
+        }
+      },
+      securityDefinitions: %{
+        Bearer: %{
+          type: "apiKey",
+          name: "Authorization",
+          description: "API Token must be provided via `Authorization: Bearer {token}",
+          in: "header"
+        }
+      },
+      consumes: ["application/json"],
+      produces: ["application/json"],
+      tags: [
+        %{name: "Users", description: "User resources"},
+      ]
     }
   end
 end

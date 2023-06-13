@@ -1,22 +1,180 @@
 {
-  "definitions": {},
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "Auth": {
+      "description": "Fields to authenticate user",
+      "properties": {
+        "identifier": {
+          "description": "User document or email",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password of user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "password",
+        "identifier"
+      ],
+      "title": "User Auth",
+      "type": "object"
+    },
+    "UserCreate": {
+      "description": "A user of the application",
+      "properties": {
+        "document": {
+          "description": "Document of user",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email of user",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "First name of user",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name of user",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password of user",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "User id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "password",
+        "document",
+        "email",
+        "first_name"
+      ],
+      "title": "User Create",
+      "type": "object"
+    },
+    "UserUpdate": {
+      "description": "User editable fields",
+      "properties": {
+        "email": {
+          "description": "Email of user",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "First name of user",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Last name of user",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password of user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "password",
+        "email",
+        "first_name"
+      ],
+      "title": "User Update",
+      "type": "object"
+    }
+  },
   "host": "localhost:4000",
   "info": {
-    "title": "Pontuai Backend",
+    "contact": {
+      "email": "begninilucas12@gmail.com",
+      "name": "Lucas Begnini"
+    },
+    "description": "API Documentation for Pontuai v1",
+    "termsOfService": "Open for public",
+    "title": "Pontuai API",
     "version": "1.0"
   },
   "paths": {
-    "/api/v1/users/{user_id}": {
-      "get": {
-        "description": "Get users, filtering by account ID",
-        "operationId": "PhxWeb.UserController.get_user",
+    "/api/v1/users": {
+      "post": {
+        "description": "",
+        "operationId": "PhxWeb.UserController.create",
         "parameters": [
           {
-            "description": "user_id",
-            "in": "user_id",
-            "name": "query",
+            "description": "user attributes",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserCreate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created"
+          },
+          "400": {
+            "description": "Bad request - Any field invalid"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Create a new user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/auth": {
+      "post": {
+        "description": "Authentication user with identifier and password. Identifier can be document or email",
+        "operationId": "PhxWeb.UserController.auth",
+        "parameters": [
+          {
+            "description": "Auth attributes",
+            "in": "body",
+            "name": "auth",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Auth"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Auth user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/{user_id}": {
+      "delete": {
+        "description": "Delete a user filtered by id",
+        "operationId": "PhxWeb.UserController.delete_user",
+        "parameters": [
+          {
+            "description": "User id",
+            "in": "path",
+            "name": "user_id",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "description": "Bearer access token",
@@ -26,20 +184,169 @@
             "type": "string"
           }
         ],
+        "produces": [
+          "application/json"
+        ],
         "responses": {
           "200": {
-            "description": "Ok"
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Delete user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Get user filtering by user id",
+        "operationId": "PhxWeb.UserController.get_user",
+        "parameters": [
+          {
+            "description": "User id",
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "404": {
             "description": "User not found"
           }
         },
-        "summary": "Get users",
+        "summary": "Get user",
         "tags": [
-          "users"
+          "Users"
+        ]
+      },
+      "patch": {
+        "description": "Update a user filtered by id",
+        "operationId": "PhxWeb.UserController.update",
+        "parameters": [
+          {
+            "description": "User id",
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "user attributes",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/UserUpdate"
+            }
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request - any field invalid"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Update user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/{user_id}/points": {
+      "get": {
+        "description": "Get user points filtered by user_id",
+        "operationId": "PhxWeb.UserController.get_points",
+        "parameters": [
+          {
+            "description": "User id",
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get user points",
+        "tags": [
+          "Users"
         ]
       }
     }
   },
-  "swagger": "2.0"
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "Bearer": {
+      "description": "API Token must be provided via `Authorization: Bearer {token}",
+      "in": "header",
+      "name": "Authorization",
+      "type": "apiKey"
+    }
+  },
+  "swagger": "2.0",
+  "tags": [
+    {
+      "description": "User resources",
+      "name": "Users"
+    }
+  ]
 }

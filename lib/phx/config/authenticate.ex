@@ -1,4 +1,4 @@
-defmodule Phx.Plug.Authenticate do
+defmodule Phx.Config.Authenticate do
   import Plug.Conn
   require Logger
 

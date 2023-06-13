@@ -1,22 +1,57 @@
 defmodule PhxWeb.UserController do 
-
   use PhxWeb, :controller
   use PhoenixSwagger
-
-  alias Phx.Service.SessionService
-  alias Phx.Service.UserService
+  alias Phx.Config.CommonParameters
+  alias Phx.Service.{SessionService, UserService}
   alias Phx.Schema.UserSchema
 
+  def swagger_definitions do
+    %{
+      UserCreate: swagger_schema do
+        title "User Create"
+        description "A user of the application"
+        properties do
+          user_id :string, "User id", required: false
+          first_name :string, "First name of user", required: true
+          last_name :string, "Last name of user", required: false
+          email :string, "Email of user", required: true
+          document :string, "Document of user", required: true
+          password :string, "Password of user", required: true
+        end
+      end,
+      UserUpdate: swagger_schema do
+        title "User Update"
+        description "User editable fields"
+        properties do
+          first_name :string, "First name of user", required: true
+          last_name :string, "Last name of user", required: false
+          email :string, "Email of user", required: true
+          password :string, "Password of user", required: true
+        end
+      end,
+      Auth: swagger_schema do
+        title "User Auth"
+        description "Fields to authenticate user"
+        properties do
+          identifier :string, "User document or email", required: true
+          password :string, "Password of user", required: true
+        end
+      end
+    }
+  end
 
   swagger_path :get_user do
     get "/api/v1/users/{user_id}"
-    summary "Get users"
-    description "Get users, filtering by account ID"
-    parameter :query, :user_id, :integer, "user_id", required: true
-    parameter("Authorization", :header, :string, "Bearer access token", required: true)
-    response 200, "Ok"
-    response 404, "User not found"
-    tag "users"
+    summary "Get user"
+    description "Get user filtering by user id"
+    produces "application/json"
+    parameters do
+      user_id :path, :string, "User id"
+    end
+    CommonParameters.authorization
+    response(200, "OK")
+    response(404, "User not found")
+    tag "Users"
   end
   def get_user(conn, params) do
     case UserService.get(params["user_id"]) do 
@@ -31,6 +66,17 @@ defmodule PhxWeb.UserController do
     end
   end
 
+  swagger_path :create do
+    post "/api/v1/users"
+    summary "Create a new user"
+    parameters do
+      user :body, Schema.ref(:UserCreate), "user attributes"
+    end
+    response(201, "User created")
+    response(400, "Bad request - Any field invalid")
+    response(500, "Internal Error")
+    tag "Users"
+  end
   def create(conn, params) do 
     {status, content} = UserService.create(params)
     
@@ -46,18 +92,22 @@ defmodule PhxWeb.UserController do
     end
   end 
 
-  def auth(conn, %{"identifier" => identifier, "password" => password}) do
-    case SessionService.new(%{"identifier" => identifier, "password" => password}) do 
-      {:ok, token, user} -> conn |> put_status(:ok) |> render("authenticated.json", token: token, user: user)
-      {:error, _message} ->  
-        conn
-          |> put_status(:unauthorized)
-          |> put_view(PhxWeb.ErrorJSON)
-          |> render("401.json")
-          |> halt()
+  swagger_path :update do
+    patch "/api/v1/users/{user_id}"
+    summary "Update user"
+    description "Update a user filtered by id"
+    produces "application/json"
+    parameters do
+      user_id :path, :string, "User id"
+      user :body, Schema.ref(:UserUpdate), "user attributes"
     end
+    CommonParameters.authorization
+    response(200, "OK")
+    response(404, "User not found")
+    response(400, "Bad Request - any field invalid")
+    response(500, "Internal Error")
+    tag "Users"
   end
-
   def update(conn, params) do 
     user_id = params["user_id"]
 
@@ -78,14 +128,26 @@ defmodule PhxWeb.UserController do
     end
   end
 
-  def delete(conn, params) do 
+  swagger_path :delete_user do
+    delete "/api/v1/users/{user_id}"
+    summary "Delete user"
+    description "Delete a user filtered by id"
+    produces "application/json"
+    parameters do
+      user_id :path, :string, "User id"
+    end
+    CommonParameters.authorization
+    response(200, "OK")
+    response(404, "User not found")
+    response(500, "Internal Error")
+    tag "Users"
+  end
+  def delete_user(conn, params) do 
     user_id = params["user_id"]
-
     res = UserService.delete(user_id)
-    IO.inspect res
 
     case res do 
-      {:deleted, _schema} ->  conn |> put_status(:ok ) |> render("user-deleted.json", user_id: user_id)
+      {:deleted, _schema} ->  conn |> put_status(:ok) |> render("user-deleted.json", user_id: user_id)
       {:not_found, %Ecto.NoResultsError{}} -> conn |> put_status(:not_found) |> render("user-not-found.json", user_id: user_id)
       {:error, _error} ->  
         conn
@@ -96,6 +158,19 @@ defmodule PhxWeb.UserController do
     end
   end
   
+  swagger_path :get_points do
+    get "/api/v1/users/{user_id}/points"
+    summary "Get user points"
+    description "Get user points filtered by user_id"
+    produces "application/json"
+    parameters do
+      user_id :path, :string, "User id"
+    end
+    CommonParameters.authorization
+    response(200, "OK")
+    response(404, "User not found")
+    tag "Users"
+  end
   def get_points(conn, params) do 
     user_id = params["user_id"]
     points = UserService.get_points(user_id)
@@ -107,6 +182,30 @@ defmodule PhxWeb.UserController do
         |> render("404.json")
         |> halt()
       _ -> conn |> put_status(:ok) |> render("user-points.json", user_id: user_id, points: points)
+    end
+  end
+
+  swagger_path :auth do
+    post "/api/v1/users/auth"
+    summary "Auth user"
+    description "Authentication user with identifier and password. Identifier can be document or email"
+    produces "application/json"
+    parameters do
+      auth :body, Schema.ref(:Auth), "Auth attributes"
+    end
+    response(200, "Authenticated")
+    response(401, "Unauthorized")
+    tag "Users"
+  end
+  def auth(conn, %{"identifier" => identifier, "password" => password}) do
+    case SessionService.new(%{"identifier" => identifier, "password" => password}) do 
+      {:ok, token, user} -> conn |> put_status(:ok) |> render("authenticated.json", token: token, user: user)
+      {:error, _message} ->  
+        conn
+          |> put_status(:unauthorized)
+          |> put_view(PhxWeb.ErrorJSON)
+          |> render("401.json")
+          |> halt()
     end
   end
 end
