@@ -22,17 +22,15 @@ defmodule PhxWeb.Router do
     forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :phx, swagger_file: "swagger.json"
   end
 
-  #PUBLIC
+  # PUBLIC
   scope "/api/v1", PhxWeb do
     pipe_through :api
-
 
     post "/users/auth", UserController, :auth
     post "/users", UserController, :create
   end
 
-
-  #AUTH
+  # AUTH
   scope "/api/v1", PhxWeb do
     pipe_through [:api, :auth]
 
@@ -40,8 +38,9 @@ defmodule PhxWeb.Router do
     patch "/users/:user_id", UserController, :update
     get "/users/:user_id/points", UserController, :get_points
     delete "/users/:user_id", UserController, :delete_user
-  end
 
+    post "/awards", AwardController, :create
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:phx, :dev_routes) do
@@ -84,7 +83,7 @@ defmodule PhxWeb.Router do
       consumes: ["application/json"],
       produces: ["application/json"],
       tags: [
-        %{name: "Users", description: "User resources"},
+        %{name: "Users", description: "User resources"}
       ]
     }
   end

@@ -22,6 +22,37 @@
       "title": "User Auth",
       "type": "object"
     },
+    "Award": {
+      "description": "A award in system",
+      "properties": {
+        "award_id": {
+          "description": "Award id",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Name",
+          "type": "string"
+        },
+        "points": {
+          "description": "Points",
+          "type": "integer"
+        },
+        "status": {
+          "description": "status",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "points",
+        "name"
+      ],
+      "title": "Award Model",
+      "type": "object"
+    },
     "UserCreate": {
       "description": "A user of the application",
       "properties": {
@@ -100,6 +131,38 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/v1/awards": {
+      "post": {
+        "description": "",
+        "operationId": "PhxWeb.AwardController.create",
+        "parameters": [
+          {
+            "description": "Award attributes",
+            "in": "body",
+            "name": "user",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Award"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Award created"
+          },
+          "400": {
+            "description": "Bad request - Any field invalid"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Create a new award",
+        "tags": [
+          "Award"
+        ]
+      }
+    },
     "/api/v1/users": {
       "post": {
         "description": "",
