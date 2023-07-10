@@ -16,6 +16,16 @@ defmodule PhxWeb.AwardJSON do
     }
   end
 
+  def render("award-found.json", %{award: award}) do
+    %{
+      is_success: true,
+      content: %{
+        found: true,
+        award: show_award(award)
+      }
+    }
+  end
+
   defp show_award(award) do
     %{
       award_id: award.award_id,

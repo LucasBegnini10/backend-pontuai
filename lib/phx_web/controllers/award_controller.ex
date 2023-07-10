@@ -3,6 +3,8 @@ defmodule PhxWeb.AwardController do
   use PhoenixSwagger
 
   alias Phx.Service.AwardService
+  alias Phx.Schema.AwardSchema
+  alias Phx.Config.CommonParameters
 
   def swagger_definitions do
     %{
@@ -33,7 +35,8 @@ defmodule PhxWeb.AwardController do
     response(201, "Award created")
     response(400, "Bad request - Any field invalid")
     response(500, "Internal Error")
-    tag("Award")
+    CommonParameters.authorization()
+    tag("Awards")
   end
 
   def create(conn, params) do
@@ -49,6 +52,38 @@ defmodule PhxWeb.AwardController do
         |> put_status(:internal_server_error)
         |> put_view(PhxWeb.ErrorJSON)
         |> render("500.json")
+        |> halt()
+    end
+  end
+
+  swagger_path :get_award do
+    get("/api/v1/awards/{user_id}")
+    summary("Get award")
+    description("Get award filtering by award id")
+    produces("application/json")
+
+    parameters do
+      award_id(:path, :string, "Award id")
+    end
+
+    CommonParameters.authorization()
+    response(200, "OK")
+    response(404, "User not found")
+    tag("Awards")
+  end
+
+  def get_award(conn, params) do
+    award_id = params["award_id"]
+
+    case AwardService.get(award_id) do
+      %AwardSchema{} = award ->
+        conn |> put_status(:ok) |> render("award-found.json", award: award)
+
+      _ ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(PhxWeb.ErrorJSON)
+        |> render("404.json")
         |> halt()
     end
   end

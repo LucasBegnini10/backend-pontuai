@@ -1,6 +1,7 @@
 defmodule Phx.Service.AwardService do
   alias Phx.Utils.{UUID}
   alias Phx.Repository.AwardRepository
+  alias Phx.Schema.AwardSchema
 
   def create(award \\ %{}) do
     award_id = UUID.generate()
@@ -26,6 +27,13 @@ defmodule Phx.Service.AwardService do
 
       _ ->
         {:error, res}
+    end
+  end
+
+  def get(id) do
+    case AwardRepository.get(id) do
+      %AwardSchema{} = award -> award
+      _ -> nil
     end
   end
 end

@@ -40,6 +40,7 @@ defmodule PhxWeb.Router do
     delete "/users/:user_id", UserController, :delete_user
 
     post "/awards", AwardController, :create
+    get "/awards/:award_id", AwardController, :get_award
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

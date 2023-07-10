@@ -144,6 +144,13 @@
             "schema": {
               "$ref": "#/definitions/Award"
             }
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -159,7 +166,44 @@
         },
         "summary": "Create a new award",
         "tags": [
-          "Award"
+          "Awards"
+        ]
+      }
+    },
+    "/api/v1/awards/{user_id}": {
+      "get": {
+        "description": "Get award filtering by award id",
+        "operationId": "PhxWeb.AwardController.get_award",
+        "parameters": [
+          {
+            "description": "Award id",
+            "in": "path",
+            "name": "award_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get award",
+        "tags": [
+          "Awards"
         ]
       }
     },
