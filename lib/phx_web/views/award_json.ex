@@ -12,7 +12,7 @@ defmodule PhxWeb.AwardJSON do
   def render("error-changeset.json", %{content: content}) do
     %{
       is_success: false,
-      errors: Enum.map(content, fn {key, {label, _}} -> %{key => label} end)
+      errors: Map.new(content, fn {key, {label, _}} -> {key, label} end)
     }
   end
 
@@ -22,6 +22,26 @@ defmodule PhxWeb.AwardJSON do
       content: %{
         found: true,
         award: show_award(award)
+      }
+    }
+  end
+
+  def render("award-updated.json", %{award: award}) do
+    %{
+      is_success: true,
+      content: %{
+        updated: true,
+        award: show_award(award)
+      }
+    }
+  end
+
+  def render("award-deleted.json", %{award_id: award_id}) do
+    %{
+      is_success: true,
+      content: %{
+        deleted: true,
+        award_id: award_id
       }
     }
   end

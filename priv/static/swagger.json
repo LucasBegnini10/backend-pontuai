@@ -23,10 +23,10 @@
       "type": "object"
     },
     "Award": {
-      "description": "A award in system",
+      "description": "An award in the system",
       "properties": {
         "award_id": {
-          "description": "Award id",
+          "description": "Award ID",
           "type": "string"
         },
         "description": {
@@ -42,7 +42,7 @@
           "type": "integer"
         },
         "status": {
-          "description": "status",
+          "description": "Status",
           "type": "boolean"
         }
       },
@@ -139,7 +139,7 @@
           {
             "description": "Award attributes",
             "in": "body",
-            "name": "user",
+            "name": "award",
             "required": false,
             "schema": {
               "$ref": "#/definitions/Award"
@@ -170,13 +170,48 @@
         ]
       }
     },
-    "/api/v1/awards/{user_id}": {
-      "get": {
-        "description": "Get award filtering by award id",
-        "operationId": "PhxWeb.AwardController.get_award",
+    "/api/v1/awards/{award_id}": {
+      "delete": {
+        "description": "Delete an award by specifying the award ID",
+        "operationId": "PhxWeb.AwardController.delete_award",
         "parameters": [
           {
-            "description": "Award id",
+            "description": "Award ID",
+            "in": "path",
+            "name": "award_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Award not found"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Delete an award",
+        "tags": [
+          "Awards"
+        ]
+      },
+      "get": {
+        "description": "Get an award by filtering with the award ID",
+        "operationId": "PhxWeb.AwardController.get_award_by_id",
+        "parameters": [
+          {
+            "description": "Award ID",
             "in": "path",
             "name": "award_id",
             "required": true,
@@ -198,10 +233,57 @@
             "description": "OK"
           },
           "404": {
-            "description": "User not found"
+            "description": "Award not found"
           }
         },
-        "summary": "Get award",
+        "summary": "Get an award",
+        "tags": [
+          "Awards"
+        ]
+      },
+      "put": {
+        "description": "Update an award by specifying the award ID",
+        "operationId": "PhxWeb.AwardController.update_award",
+        "parameters": [
+          {
+            "description": "Award ID",
+            "in": "path",
+            "name": "award_id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Updated award attributes",
+            "in": "body",
+            "name": "award",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Award"
+            }
+          },
+          {
+            "description": "Bearer access token",
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request - Any field invalid"
+          },
+          "404": {
+            "description": "Award not found"
+          },
+          "500": {
+            "description": "Internal Error"
+          }
+        },
+        "summary": "Update an award",
         "tags": [
           "Awards"
         ]
